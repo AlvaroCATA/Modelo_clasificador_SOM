@@ -40,7 +40,7 @@ grupos formados en la primera etapa. Al final se utiliza el concepto de
 centroide para reagrupar a las neuronas que no hayan sido bien clasificadas
 """
     
-def merge_and_Create_Protoclusters (distance_matrix,threshold,weights,
+def _merge_and_create_protoclusters (distance_matrix,threshold,weights,
                                     cluster_matrix,statistical_params,
                                     distance,percentage_similarity):
     max_Dis = np.amax(distance)
