@@ -1,2 +1,2 @@
-# visualization-tools-SOMs
-Herramientas para visualizar mapas auto-organizados con topología hexagonal
+# Herramientas de visualización, análisis y procesamiento con los SOMs
+El archivo contiene las funciones empaquetadas en bibliotecas y dividas por funcionalidad para el trabajo de investigación realizado
