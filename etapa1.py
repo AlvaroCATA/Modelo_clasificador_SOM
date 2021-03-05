@@ -5,18 +5,7 @@ Created on Mon May 18 16:13:51 2020
 """
 import numpy as np
 import copy 
-
-
-
-
-###############################################################################
-"""
-Retorna la matriz de distancia euclidiana entre dos arreglos
-"""
-def _all_einsum(A,B):
-    subts = A[:,None,:] - B
-    return np.sqrt(np.einsum('ijk,ijk->ij',subts,subts))
-###############################################################################
+import functions as fun
 
 ###############################################################################
 """
@@ -24,7 +13,7 @@ Retorna las posiciones de los valores mínimos de distancia de las filas
 de la matriz 
 """
 def _generate_labels(data,weights):
-    labels = np.argmin(_all_einsum(data,weights), axis = 1)
+    labels = np.argmin(fun._all_einsum(data,weights), axis = 1)
     return labels
 ###############################################################################
     
@@ -58,7 +47,7 @@ def _get_range(distance_matrix,threshold,tolerance):
 Retorna la matriz de distancia triangular superior del arreglo introducido
 """       
 def _get_distance_matrix(matrix):
-    distance_matrix = _all_einsum(matrix, matrix)
+    distance_matrix = fun._all_einsum(matrix, matrix)
     distance_matrix[np.tril_indices(matrix.shape[0],k=-1)] = 1000
     return distance_matrix
 ###############################################################################
@@ -114,7 +103,7 @@ def _create_clusters(distance_matrix,weights,labels,number_of_neurons,
     for i in range (len(unique_elements)):
         index = np.argwhere(Tag_Matrix_Copy == i)
         centroid = np.mean(weights[index,:],axis = 0)
-        centroids[i] = index[np.argmin(_all_einsum(centroid, weights[index,:]))]
+        centroids[i] = index[np.argmin(fun._all_einsum(centroid, weights[index,:]))]
     #A partir de los centros se verifican de nuevo cuales neuronas que cumplen
     #con la condicion de distancia y threshold para un reetiquetado
     #print(centroids)
@@ -122,7 +111,7 @@ def _create_clusters(distance_matrix,weights,labels,number_of_neurons,
         index_Neurons = np.argwhere(distance_matrix[centroids[i],:]< threshold)
         index =  np.argwhere(Tag_Matrix_Copy == i)
         complement = np.setdiff1d(index_Neurons, index)
-        reshape = np.argmin ( _all_einsum(weights[complement,:],weights[centroids,:]), axis = 1)
+        reshape = np.argmin ( fun._all_einsum(weights[complement,:],weights[centroids,:]), axis = 1)
         for j in range (len(complement)):
             Tag_Matrix_Copy[complement[j]] = reshape[j]  
     Tag_Matrix_Copy = Tag_Matrix_Copy.reshape((size_map_x,size_map_y))  
