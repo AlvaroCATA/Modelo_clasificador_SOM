@@ -4,16 +4,10 @@ Created on Mon May 18 16:20:36 2020
 @author: alvaro
 """
 import numpy as np
+import functions as fun
 from scipy import stats
 
-###############################################################################
-"""
-Retorna la matriz de distancia euclidiana entre dos arreglos
-"""
-def _all_einsum(A,B):
-    subts = A[:,None,:] - B
-    return np.sqrt(np.einsum('ijk,ijk->ij',subts,subts))
-###############################################################################
+
 
 ###############################################################################
 """
@@ -28,7 +22,7 @@ def _get_params_and_distance_matrix(vector,weights):
         parameters[w,(weights.shape[1]):(2*weights.shape[1])] = np.std(weights[index,:],axis = 0)
         parameters[w,(2*weights.shape[1]):(3*weights.shape[1])] = stats.mode(weights[index,:])[0].flatten()
         parameters[w,(3*weights.shape[1])] = np.ptp(weights[index,:])
-    distance_Parameters = _all_einsum(parameters, parameters) 
+    distance_Parameters = fun._all_einsum(parameters, parameters) 
     return parameters, distance_Parameters
 ###############################################################################
     
@@ -90,14 +84,14 @@ def _merge_and_create_protoclusters (distance_matrix,threshold,weights,
     for i in range (len(unique_elements)):
         index = np.argwhere(cluster_matrix == i)
         centroid = np.mean(weights[index,:],axis = 0)
-        centroids[i] = index[np.argmin(_all_einsum(centroid, weights[index,:]))]
+        centroids[i] = index[np.argmin(fun._all_einsum(centroid, weights[index,:]))]
     #A partir de los centros se verifican de nuevo cuales neuronas que cumplen
     #con la condicion de distancia y threshold para un reetiquetado
     for i in range (len(unique_elements)):
         index_Neurons = np.argwhere(distance_matrix[centroids[i],:]< threshold)
         index =  np.argwhere(cluster_matrix == i)
         complement = np.setdiff1d(index_Neurons, index)
-        reshape = np.argmin ( _all_einsum(weights[complement,:],weights[centroids,:]), axis = 1)
+        reshape = np.argmin (fun. _all_einsum(weights[complement,:],weights[centroids,:]), axis = 1)
         for j in range (len(complement)):
             cluster_matrix[complement[j]] = reshape[j]  
     cluster_matrix = cluster_matrix.reshape((gridx,gridy))  
